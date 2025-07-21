@@ -30,7 +30,7 @@ function(import_Eigen3)
     endforeach()
 
     if (NOT DEPENDENCY_USE_SYSTEM AND DEPENDENCY_VERSION VERSION_LESS "3.5.0")
-        message(AUTHOR_WARNING "Fetching ${DEPENDENCY} ${DEPENDENCY_VERSION} which defines an uninstall target that "
+        message(AUTHOR_WARNING "Fetching Eigen3 ${DEPENDENCY_VERSION} which defines an uninstall target that "
             "may interfere with other projects. This is fixed from VERSION 3.5.0 "
             "(Issue: https://gitlab.com/libeigen/eigen/-/issues/1892, "
             "Merge Request: https://gitlab.com/libeigen/eigen/-/merge_requests/1885).")
