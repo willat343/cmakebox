@@ -182,6 +182,12 @@ function(import_dependency DEPENDENCY)
                 GIT_REPOSITORY ${DEPENDENCY_GIT_REPOSITORY}
                 GIT_TAG        ${DEPENDENCY_GIT_TAG}
             )
+            if (FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE} AND NOT EXISTS
+                    ${FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE}})
+                message(FATAL_ERROR "FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE} was specified as "
+                    "${FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE}} but no directory was found. The user is "
+                    "resposible for downloading code to a specified FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE}.")
+            endif()
             FetchContent_MakeAvailable(${DEPENDENCY})
             set(${DEPENDENCY}_DIR ${${DEPENDENCY}_BINARY_DIR} CACHE STRING "${DEPENDENCY} directory" FORCE)
             message(STATUS "Fetched ${DEPENDENCY} to ${${DEPENDENCY}_SOURCE_DIR} with tag ${DEPENDENCY_GIT_TAG}")
