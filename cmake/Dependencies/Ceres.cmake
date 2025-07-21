@@ -1,14 +1,14 @@
 # Import Ceres as:
 #   import_Ceres(
 #        VERSION <STRING:version>
-#        [USE_SYSTEM]
+#        [USE_FIND_PACKAGE]
 #   )
 #
 # Link to Ceres::ceres target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> Ceres::ceres)
 function(import_Ceres)
     set(OPTIONS
-        USE_SYSTEM
+        USE_FIND_PACKAGE
     )
     set(SINGLE_VALUE_ARGS
         VERSION
@@ -34,7 +34,7 @@ function(import_Ceres)
         Ceres
         TARGET Ceres::ceres
         VERSION ${DEPENDENCY_VERSION}
-        USE_SYSTEM_REQUIRED_VERSION "2.2.0"
+        USE_FIND_PACKAGE_REQUIRED_VERSION "2.2.0"
         GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
         GIT_TAG ${DEPENDENCY_VERSION}
         ${OUTPUT_OPTIONS}

@@ -1,14 +1,14 @@
 # Import manif as:
 #   import_manif(
 #        VERSION <STRING:version>
-#        [USE_SYSTEM]
+#        [USE_FIND_PACKAGE]
 #   )
 #
 # Link to MANIF::manif target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> MANIF::manif)
 function(import_manif)
     set(OPTIONS
-        USE_SYSTEM
+        USE_FIND_PACKAGE
     )
     set(SINGLE_VALUE_ARGS
         VERSION
@@ -34,7 +34,7 @@ function(import_manif)
         manif
         TARGET MANIF::manif
         VERSION ${DEPENDENCY_VERSION}
-        USE_SYSTEM_REQUIRED_VERSION "0.0.6"
+        USE_FIND_PACKAGE_REQUIRED_VERSION "0.0.6"
         GIT_REPOSITORY https://github.com/willat343/manif.git
         GIT_TAG feature/cmake_fetchcontent_support # i.e. 6e6dc6dd36171dac79e3f7f56713a86adc9eafd5
         ${OUTPUT_OPTIONS}

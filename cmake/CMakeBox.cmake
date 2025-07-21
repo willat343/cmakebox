@@ -101,21 +101,21 @@ endfunction()
 #        <dependency_name>
 #        TARGET <STRING:target>
 #        VERSION <STRING:version>
-#        USE_SYSTEM_REQUIRED_VERSION <STRING:version>
+#        USE_FIND_PACKAGE_REQUIRED_VERSION <STRING:version>
 #        GIT_REPOSITORY <STRING:repository>
 #        GIT_TAG <STRING:tag/branch/commit>
-#        [USE_SYSTEM]
+#        [USE_FIND_PACKAGE]
 #        [DISABLE_CACHE_VARS <VAR1> [<VAR2> ...]]
 #        [ENABLE_CACHE_VARS <VAR1> [<VAR2> ...]]
 #   )
 function(import_dependency DEPENDENCY)
     set(OPTIONS
-        USE_SYSTEM
+        USE_FIND_PACKAGE
     )
     set(SINGLE_VALUE_ARGS
         TARGET
         VERSION
-        USE_SYSTEM_REQUIRED_VERSION
+        USE_FIND_PACKAGE_REQUIRED_VERSION
         GIT_REPOSITORY
         GIT_TAG
     )
@@ -136,19 +136,19 @@ function(import_dependency DEPENDENCY)
         message(FATAL_ERROR "Missing argument TARGET for import_dependency ${DEPENDENCY}")
     endif()
 
-    if (DEPENDENCY_USE_SYSTEM_REQUIRED_VERSION AND NOT DEPENDENCY_USE_SYSTEM
-            AND DEPENDENCY_VERSION VERSION_LESS DEPENDENCY_USE_SYSTEM_REQUIRED_VERSION)
-        message(FATAL_ERROR "Must use USE_SYSTEM flag for ${DEPENDENCY} VERSION < "
-            "${DEPENDENCY_USE_SYSTEM_REQUIRED_VERSION}. ${DEPENDENCY} does not support FetchContent prior to this "
+    if (DEPENDENCY_USE_FIND_PACKAGE_REQUIRED_VERSION AND NOT DEPENDENCY_USE_FIND_PACKAGE
+            AND DEPENDENCY_VERSION VERSION_LESS DEPENDENCY_USE_FIND_PACKAGE_REQUIRED_VERSION)
+        message(FATAL_ERROR "Must use USE_FIND_PACKAGE flag for ${DEPENDENCY} VERSION < "
+            "${DEPENDENCY_USE_FIND_PACKAGE_REQUIRED_VERSION}. ${DEPENDENCY} does not support FetchContent prior to this "
             "release. Requested VERSION was ${DEPENDENCY_VERSION}.")
     endif()
 
     if (NOT TARGET ${DEPENDENCY_TARGET})
-        message(STATUS "Importing ${DEPENDENCY} (Target: ${DEPENDENCY_TARGET}, USE_SYSTEM = ${DEPENDENCY_USE_SYSTEM})")
-        if (DEPENDENCY_USE_SYSTEM)
+        message(STATUS "Importing ${DEPENDENCY} (Target: ${DEPENDENCY_TARGET}, USE_FIND_PACKAGE = ${DEPENDENCY_USE_FIND_PACKAGE})")
+        if (DEPENDENCY_USE_FIND_PACKAGE)
             message(STATUS "    VERSION=${DEPENDENCY_VERSION}")
-            if (DEPENDENCY_USE_SYSTEM_REQUIRED_VERSION)
-                message(DEBUG "    USE_SYSTEM_REQUIRED_VERSION=${DEPENDENCY_USE_SYSTEM_REQUIRED_VERSION}")
+            if (DEPENDENCY_USE_FIND_PACKAGE_REQUIRED_VERSION)
+                message(DEBUG "    USE_FIND_PACKAGE_REQUIRED_VERSION=${DEPENDENCY_USE_FIND_PACKAGE_REQUIRED_VERSION}")
             endif()
         else()
             if (FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE})
@@ -161,7 +161,7 @@ function(import_dependency DEPENDENCY)
             message(DEBUG "    ENABLE_CACHE_VARIABLES=${DEPENDENCY_ENABLE_CACHE_VARIABLES}")
         endif()
 
-        if (DEPENDENCY_USE_SYSTEM)
+        if (DEPENDENCY_USE_FIND_PACKAGE)
             if (NOT DEPENDENCY_VERSION)
                 message(FATAL_ERROR "Missing VERSION for dependency ${DEPENDENCY}")
             endif()

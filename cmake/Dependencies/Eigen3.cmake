@@ -1,14 +1,14 @@
 # Import Eigen3 as:
 #   import_Eigen3(
 #        VERSION <STRING:version>
-#        [USE_SYSTEM]
+#        [USE_FIND_PACKAGE]
 #   )
 #
 # Link to Eigen3::Eigen target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> Eigen3::Eigen)
 function(import_Eigen3)
     set(OPTIONS
-        USE_SYSTEM
+        USE_FIND_PACKAGE
     )
     set(SINGLE_VALUE_ARGS
         VERSION
@@ -29,7 +29,7 @@ function(import_Eigen3)
         endif()
     endforeach()
 
-    if (NOT TARGET Eigen3::Eigen AND NOT DEPENDENCY_USE_SYSTEM AND DEPENDENCY_VERSION VERSION_LESS "3.5.0")
+    if (NOT TARGET Eigen3::Eigen AND NOT DEPENDENCY_USE_FIND_PACKAGE AND DEPENDENCY_VERSION VERSION_LESS "3.5.0")
         message(AUTHOR_WARNING "Fetching Eigen3 ${DEPENDENCY_VERSION} which defines an uninstall target that "
             "may interfere with other projects. This is fixed from VERSION 3.5.0 "
             "(Issue: https://gitlab.com/libeigen/eigen/-/issues/1892, "
@@ -40,7 +40,7 @@ function(import_Eigen3)
         Eigen3
         TARGET Eigen3::Eigen
         VERSION ${DEPENDENCY_VERSION}
-        USE_SYSTEM_REQUIRED_VERSION "3.4.0"
+        USE_FIND_PACKAGE_REQUIRED_VERSION "3.4.0"
         GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
         GIT_TAG ${DEPENDENCY_VERSION}
         ${OUTPUT_OPTIONS}

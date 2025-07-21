@@ -1,14 +1,14 @@
 # Import nlohmann_json as:
 #   import_nlohmann_json(
 #        VERSION <STRING:version>
-#        [USE_SYSTEM]
+#        [USE_FIND_PACKAGE]
 #   )
 #
 # Link to nlohmann_json::nlohmann_json target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> nlohmann_json::nlohmann_json)
 function(import_nlohmann_json)
     set(OPTIONS
-        USE_SYSTEM
+        USE_FIND_PACKAGE
     )
     set(SINGLE_VALUE_ARGS
         VERSION
@@ -33,7 +33,7 @@ function(import_nlohmann_json)
         nlohmann_json
         TARGET nlohmann_json::nlohmann_json
         VERSION ${DEPENDENCY_VERSION}
-        USE_SYSTEM_REQUIRED_VERSION "3.8.0"
+        USE_FIND_PACKAGE_REQUIRED_VERSION "3.8.0"
         GIT_REPOSITORY https://github.com/nlohmann/json.git
         GIT_TAG v${DEPENDENCY_VERSION}
         ${OUTPUT_OPTIONS}
