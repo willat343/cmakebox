@@ -8,6 +8,17 @@ if (CMAKEBOX_ON_MODULE_PATH EQUAL -1)
 endif()
 unset(CMAKEBOX_ON_MODULE_PATH)
 
+# Print CMake variables. Optionally pass a regex argument and only variable names matching that regex will be printed.
+function(print_cmake_variables)
+    get_cmake_property(VARIABLE_NAMES VARIABLES)
+    list(SORT VARIABLE_NAMES)
+    foreach (VARIABLE_NAME ${VARIABLE_NAMES})
+        if (NOT DEFINED ARGV0 OR VARIABLE_NAME MATCHES ${ARGV0})
+            message(STATUS "${VARIABLE_NAME}=${${VARIABLE_NAME}}")
+        endif()
+    endforeach()
+endfunction()
+
 # Create CMAKE_BUILD_TYPE option with default value and supported options
 function(setup_build_type)
     if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
