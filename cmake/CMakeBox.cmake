@@ -46,6 +46,25 @@ function(get_cxx_compiler_info)
     endif()
 endfunction()
 
+# Create uninstall target (if doesn't exist and project is top level)
+function(create_uninstall_target)
+    if (PROJECT_IS_TOP_LEVEL)
+        if (NOT TARGET uninstall)
+            configure_file(
+                "${CMAKE_CURRENT_LIST_DIR}/cmake_uninstall.cmake.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+                @ONLY
+            )
+            add_custom_target(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+        else()
+            message(AUTHOR_WARNING "Skipping creation of uninstall target even though ${PROJECT_NAME} is top level "
+                "project because target already exists (possibly created by an imported dependency).")
+        endif()
+    else()
+        message(STATUS "Skipping creation of uninstall target because ${PROJECT_NAME} is not top level project.")
+    endif()
+endfunction()
+
 # Enable each  BOOLvariable passed to this function, and cache the previous value for restoration.
 function(enable_cache_variables)
     foreach(VARIABLE IN LISTS ARGN)
