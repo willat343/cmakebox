@@ -59,6 +59,7 @@ function(import_mcap)
     FetchContent_GetProperties(mcap_cpp SOURCE_DIR mcap_cpp_SOURCE_DIR)
 
     # TODO: use install/export insights from https://github.com/olympus-robotics/mcap_builder
+    if (NOT TARGET mcap::mcap)
         add_library(mcap INTERFACE)
         add_library(mcap::mcap ALIAS mcap)
         if (MCAP_LINK_LIBRARIES)
