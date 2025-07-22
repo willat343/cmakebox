@@ -24,12 +24,6 @@ This provides several useful CMake functions for your project.
 
 One of the most important functions provided by cmakebox is `import_dependency()`.
 
-Additionally several `import_*()` functions are provided for importing specific dependencies when included:
-```CMake
-include(Dependencies/Ceres)
-include(Dependencies/Eigen3)
-include(Dependencies/manif)
-include(Dependencies/nlohmann_json)
-```
+Additionally several `import_*()` functions are provided for importing specific dependencies.
 
 

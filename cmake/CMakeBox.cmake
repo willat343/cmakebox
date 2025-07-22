@@ -202,3 +202,5 @@ function(import_dependency DEPENDENCY)
         message(STATUS "${DEPENDENCY} (Target: ${DEPENDENCY_TARGET}) already imported.")
     endif()
 endfunction()
+
+include(CMakeBoxDependencies)

@@ -1,0 +1,6 @@
+include(Dependencies/Ceres)
+include(Dependencies/cxxopts)
+include(Dependencies/Eigen3)
+include(Dependencies/manif)
+include(Dependencies/nlohmann_json)
+include(Dependencies/mcap)
