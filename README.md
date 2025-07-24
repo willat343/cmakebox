@@ -11,7 +11,7 @@ set(CMAKEBOX_VERSION "X.Y.Z")
 FetchContent_Declare(
     cmakebox
     GIT_REPOSITORY git@github.com:willat343/cmakebox.git
-    GIT_TAG ${CMAKEBOX_VERSION}
+    GIT_TAG v${CMAKEBOX_VERSION}
 )
 FetchContent_MakeAvailable(cmakebox)
 list(APPEND CMAKE_MODULE_PATH "${cmakebox_SOURCE_DIR}/cmake")
