@@ -36,7 +36,7 @@ function(import_manif)
         VERSION ${DEPENDENCY_VERSION}
         USE_FIND_PACKAGE_REQUIRED_VERSION "0.0.6"
         GIT_REPOSITORY https://github.com/willat343/manif.git
-        GIT_TAG feature/cmake_fetchcontent_support # i.e. 6e6dc6dd36171dac79e3f7f56713a86adc9eafd5
+        GIT_TAG temp/fix/pedantic_warnings
         ${OUTPUT_OPTIONS}
         DISABLE_CACHE_VARIABLES BUILD_TESTING BUILD_EXAMPLES
     )
