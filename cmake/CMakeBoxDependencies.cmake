@@ -4,26 +4,28 @@
 #   import_dependency(
 #        <dependency_name>
 #        TARGET <STRING:target>
-#        VERSION <STRING:version>
-#        GIT_REPOSITORY <STRING:repository>
-#        GIT_TAG <STRING:tag/branch/commit>
+#        METHOD <STRING:FIND_PACKAGE|FETCH_GIT|FETCH_URL>
+#        [FIND_PACKAGE_VERSION <STRING:version>]
+#        [GIT_REPOSITORY <STRING:repository>]
+#        [GIT_TAG <STRING:tag/branch/commit>]
 #        [SOURCE_SUBDIR <STRING:path_to_CMakelists.txt>]
-#        [USE_FIND_PACKAGE_REQUIRED_VERSION <STRING:version>]
-#        [USE_FIND_PACKAGE]
+#        [URL <STRING:url>]
+#        [URL_HASH <STRING:hash_algorithm=hash>]
 #        [DISABLE_CACHE_VARS <VAR1> [<VAR2> ...]]
 #        [ENABLE_CACHE_VARS <VAR1> [<VAR2> ...]]
 #   )
 function(import_dependency DEPENDENCY)
-    set(OPTIONS
-        USE_FIND_PACKAGE
-    )
+    # Parse Inputs
+    set(OPTIONS)
     set(SINGLE_VALUE_ARGS
         TARGET
-        VERSION
-        USE_FIND_PACKAGE_REQUIRED_VERSION
+        METHOD
+        FIND_PACKAGE_VERSION
         GIT_REPOSITORY
         GIT_TAG
         SOURCE_SUBDIR
+        URL
+        URL_HASH
     )
     set(MULTI_VALUE_ARGS
         DISABLE_CACHE_VARIABLES
@@ -36,67 +38,94 @@ function(import_dependency DEPENDENCY)
         "${MULTI_VALUE_ARGS}"
         ${ARGN}
     )
-    string(TOLOWER ${DEPENDENCY} DEPENDENCY_LOWERCASE)
-    string(TOUPPER ${DEPENDENCY} DEPENDENCY_UPPERCASE)
 
+    # Set defaults and check inputs
     if(NOT DEPENDENCY_SOURCE_SUBDIR)
         set(DEPENDENCY_SOURCE_SUBDIR ".")
     endif()
-
     if (NOT DEPENDENCY_TARGET)
-        message(FATAL_ERROR "Missing argument TARGET for import_dependency ${DEPENDENCY}")
+        message(FATAL_ERROR "Missing argument TARGET for import_dependency(${DEPENDENCY}).")
+    endif()
+    if (DEPENDENCY_METHOD STREQUAL "FETCH_GIT")
+        if (NOT DEPENDENCY_GIT_REPOSITORY)
+            message(FATAL_ERROR "Missing argument GIT_REPOSITORY when using METHOD ${DEPENDENCY_METHOD} for "
+                "import_dependency(${DEPENDENCY})")
+        endif()
+        if (NOT DEPENDENCY_GIT_TAG)
+            message(FATAL_ERROR "Missing argument GIT_TAG when using METHOD ${DEPENDENCY_METHOD} for "
+                "import_dependency(${DEPENDENCY})")
+        endif()
+    elseif(DEPENDENCY_METHOD STREQUAL "FETCH_URL")
+        if (NOT DEPENDENCY_URL)
+            message(FATAL_ERROR "Missing argument URL when using METHOD ${DEPENDENCY_METHOD} for "
+                "import_dependency(${DEPENDENCY})")
+        endif()
+        if (NOT DEPENDENCY_URL_HASH)
+            message(AUTHOR_WARNING "Missing argument URL_HASH when using METHOD ${DEPENDENCY_METHOD} for "
+                "import_dependency(${DEPENDENCY}). Including the URL_HASH is highly recommended.")
+        endif()
+    elseif(NOT DEPENDENCY_METHOD STREQUAL "FIND_PACKAGE")
+        message(FATAL_ERROR "METHOD is ${DEPENDENCY_METHOD} which is not one of {FIND_PACKAGE|FETCH_GIT|FETCH_URL} "
+            "options for import_dependency(${DEPENDENCY}).")
     endif()
 
-    if (DEPENDENCY_USE_FIND_PACKAGE_REQUIRED_VERSION AND NOT DEPENDENCY_USE_FIND_PACKAGE
-            AND DEPENDENCY_VERSION VERSION_LESS DEPENDENCY_USE_FIND_PACKAGE_REQUIRED_VERSION)
-        message(FATAL_ERROR "Must use USE_FIND_PACKAGE flag for ${DEPENDENCY} VERSION < "
-            "${DEPENDENCY_USE_FIND_PACKAGE_REQUIRED_VERSION}. ${DEPENDENCY} does not support FetchContent prior to "
-            "this release. Requested VERSION was ${DEPENDENCY_VERSION}.")
-    endif()
+    # Set helpful variables
+    string(TOLOWER ${DEPENDENCY} DEPENDENCY_LOWERCASE)
+    string(TOUPPER ${DEPENDENCY} DEPENDENCY_UPPERCASE)
 
+    # Import
     if (NOT TARGET ${DEPENDENCY_TARGET})
-        message(STATUS
-            "Importing ${DEPENDENCY} (Target: ${DEPENDENCY_TARGET}, USE_FIND_PACKAGE = ${DEPENDENCY_USE_FIND_PACKAGE})")
-        if (DEPENDENCY_USE_FIND_PACKAGE)
-            message(STATUS "    VERSION=${DEPENDENCY_VERSION}")
-            if (DEPENDENCY_USE_FIND_PACKAGE_REQUIRED_VERSION)
-                message(VERBOSE "    USE_FIND_PACKAGE_REQUIRED_VERSION=${DEPENDENCY_USE_FIND_PACKAGE_REQUIRED_VERSION}")
+        message(STATUS "Importing ${DEPENDENCY} (Target: ${DEPENDENCY_TARGET}, METHOD = ${DEPENDENCY_METHOD})")
+        if (DEPENDENCY_METHOD STREQUAL "FIND_PACKAGE")
+            message(STATUS "    FIND_PACKAGE_VERSION=${DEPENDENCY_FIND_PACKAGE_VERSION}")
+            if (NOT DEPENDENCY_FIND_PACKAGE_VERSION)
+                message(AUTHOR_WARNING "Missing FIND_PACKAGE_VERSION for dependency ${DEPENDENCY}.")
             endif()
+            find_package(${DEPENDENCY} ${DEPENDENCY_FIND_PACKAGE_VERSION} REQUIRED)
+            message(STATUS "Found ${DEPENDENCY} at ${${DEPENDENCY}_DIR} with version ${${DEPENDENCY}_VERSION}.")
         else()
             if (FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE})
                 message(STATUS "    FETCHCONTENT_SOURCE_DIR=${FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE}}")
-            else()
+            elseif(DEPENDENCY_METHOD STREQUAL "FETCH_GIT")
                 message(STATUS "    GIT_REPOSITORY=${DEPENDENCY_GIT_REPOSITORY}")
                 message(STATUS "    GIT_TAG=${DEPENDENCY_GIT_TAG}")
+            elseif(DEPENDENCY_METHOD STREQUAL "FETCH_URL")
+                message(STATUS "    URL=${DEPENDENCY_URL}")
+                message(STATUS "    URL_HASH=${DEPENDENCY_URL_HASH}")
             endif()
             message(VERBOSE "    SOURCE_SUBDIR=${DEPENDENCY_SOURCE_SUBDIR}")
             message(VERBOSE "    DISABLE_CACHE_VARIABLES=${DEPENDENCY_DISABLE_CACHE_VARIABLES}")
             message(VERBOSE "    ENABLE_CACHE_VARIABLES=${DEPENDENCY_ENABLE_CACHE_VARIABLES}")
-        endif()
-
-        if (DEPENDENCY_USE_FIND_PACKAGE)
-            if (NOT DEPENDENCY_VERSION)
-                message(FATAL_ERROR "Missing VERSION for dependency ${DEPENDENCY}")
-            endif()
-            find_package(${DEPENDENCY} ${DEPENDENCY_VERSION} REQUIRED)
-            message(STATUS "Found ${DEPENDENCY} at ${${DEPENDENCY}_DIR} with version ${${DEPENDENCY}_VERSION}")
-        else()
             if (DEPENDENCY_DISABLE_CACHE_VARIABLES)
                 disable_cache_variables(${DEPENDENCY_DISABLE_CACHE_VARIABLES})
             endif()
             if (DEPENDENCY_ENABLE_CACHE_VARIABLES)
                 enable_cache_variables(${DEPENDENCY_ENABLE_CACHE_VARIABLES})
             endif()
-            if (NOT DEPENDENCY_GIT_REPOSITORY OR NOT DEPENDENCY_GIT_TAG)
-                message(FATAL_ERROR "Missing GIT_REPOSITORY or GIT_TAG for dependency ${DEPENDENCY}")
+            if (DEPENDENCY_METHOD STREQUAL "FETCH_GIT")
+                FetchContent_Declare(
+                    ${DEPENDENCY}
+                    GIT_REPOSITORY ${DEPENDENCY_GIT_REPOSITORY}
+                    GIT_TAG        ${DEPENDENCY_GIT_TAG}
+                    SOURCE_SUBDIR  ${DEPENDENCY_SOURCE_SUBDIR}
+                    OVERRIDE_FIND_PACKAGE
+                )
+            elseif(DEPENDENCY_METHOD STREQUAL "FETCH_URL")
+                set(URL_HASH_IF_AVAILABLE)
+                if (DEPENDENCY_URL_HASH)
+                    set(URL_HASH_IF_AVAILABLE URL_HASH "${DEPENDENCY_URL_HASH}")
+                endif()
+                FetchContent_Declare(
+                    ${DEPENDENCY}
+                    URL ${DEPENDENCY_URL}
+                    ${URL_HASH_IF_AVAILABLE}
+                    SOURCE_SUBDIR  ${DEPENDENCY_SOURCE_SUBDIR}
+                    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+                    OVERRIDE_FIND_PACKAGE
+                )
+            else()
+                message(FATAL_ERROR "METHOD ${DEPENDENCY_METHOD}")
             endif()
-            FetchContent_Declare(
-                ${DEPENDENCY}
-                GIT_REPOSITORY ${DEPENDENCY_GIT_REPOSITORY}
-                GIT_TAG        ${DEPENDENCY_GIT_TAG}
-                SOURCE_SUBDIR  ${DEPENDENCY_SOURCE_SUBDIR}
-                OVERRIDE_FIND_PACKAGE
-            )
             if (FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE} AND NOT EXISTS
                     ${FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE}})
                 message(FATAL_ERROR
@@ -107,8 +136,7 @@ function(import_dependency DEPENDENCY)
             FetchContent_MakeAvailable(${DEPENDENCY})
             set(${DEPENDENCY}_FOUND "YES" CACHE STRING "${DEPENDENCY} was imported" FORCE)
             set(${DEPENDENCY}_DIR ${${DEPENDENCY}_BINARY_DIR} CACHE STRING "${DEPENDENCY} directory" FORCE)
-            message(STATUS
-                "Fetched ${DEPENDENCY} to ${${DEPENDENCY_LOWERCASE}_SOURCE_DIR} with tag ${DEPENDENCY_GIT_TAG}")
+            message(STATUS "Fetched ${DEPENDENCY} to ${${DEPENDENCY_LOWERCASE}_SOURCE_DIR}.")
             if (DEPENDENCY_DISABLE_CACHE_VARIABLES)
                 restore_cache_variables(${DEPENDENCY_DISABLE_CACHE_VARIABLES})
             endif()

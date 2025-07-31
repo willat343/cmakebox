@@ -1,17 +1,18 @@
 # Import manif as:
 #   import_manif(
 #        VERSION <STRING:version>
-#        [USE_FIND_PACKAGE]
+#        [METHOD <STRING:FETCH_GIT>]
 #   )
+#
+# Default METHOD is GIT.
 #
 # Link to MANIF::manif target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> MANIF::manif)
 function(import_manif)
-    set(OPTIONS
-        USE_FIND_PACKAGE
-    )
+    set(OPTIONS)
     set(SINGLE_VALUE_ARGS
         VERSION
+        METHOD
     )
     set(MULTI_VALUE_ARGS)
     cmake_parse_arguments(
@@ -22,18 +23,21 @@ function(import_manif)
         ${ARGN}
     )
 
-    set(OUTPUT_OPTIONS)
-    foreach(OPTION ${OPTIONS})
-        if (DEPENDENCY_${OPTION})
-            list(APPEND OUTPUT_OPTIONS ${OPTION})
-        endif()
-    endforeach()
+    if (NOT DEPENDENCY_METHOD)
+        set(DEPENDENCY_METHOD "FETCH_GIT")
+    endif()
+
+    if (NOT DEPENDENCY_USE_FIND_PACKAGE AND DEPENDENCY_VERSION VERSION_LESS "0.0.6")
+        message(FATAL_ERROR "Must add USE_FIND_PACKAGE for VERSION < 0.0.6 because manif does not support FetchContent "
+            "correctly prior to this version.")
+    endif()
 
     # TODO: switch repo from fork and switch ${DEPENDENCY_VERSION} after PR https://github.com/artivis/manif/pull/332
     import_dependency(
         manif
         TARGET MANIF::manif
-        VERSION ${DEPENDENCY_VERSION}
+        METHOD ${DEPENDENCY_METHOD}
+        FIND_PACKAGE_VERSION ${DEPENDENCY_VERSION}
         USE_FIND_PACKAGE_REQUIRED_VERSION "0.0.6"
         GIT_REPOSITORY https://github.com/willat343/manif.git
         GIT_TAG temp/fix/pedantic_warnings

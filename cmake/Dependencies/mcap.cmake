@@ -1,9 +1,12 @@
 # Import mcap as:
 #   import_mcap(
 #        VERSION <STRING:version>
+#        [METHOD <STRING:FETCH_GIT>]
 #        [IMPORT_LZ4]
 #        [IMPORT_ZSTD]
 #   )
+#
+# Default METHOD is FETCH_GIT.
 #
 # Link to mcap target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> mcap::mcap)
@@ -14,6 +17,7 @@ function(import_mcap)
     )
     set(SINGLE_VALUE_ARGS
         VERSION
+        METHOD
     )
     set(MULTI_VALUE_ARGS)
     cmake_parse_arguments(
@@ -36,6 +40,10 @@ function(import_mcap)
         )
     endif()
 
+    if (NOT DEPENDENCY_METHOD)
+        set(DEPENDENCY_METHOD "FETCH_GIT")
+    endif()
+
     set(MCAP_LINK_LIBRARIES)
     set(MCAP_COMPILE_DEFINITIONS MCAP_IMPLEMENTATION)
     if (TARGET LZ4::lz4)
@@ -52,7 +60,8 @@ function(import_mcap)
     import_dependency(
         mcap_cpp
         TARGET mcap::mcap
-        VERSION ${DEPENDENCY_VERSION}
+        METHOD ${DEPENDENCY_METHOD}
+        FIND_PACKAGE_VERSION ${DEPENDENCY_VERSION}
         GIT_REPOSITORY https://github.com/foxglove/mcap.git
         GIT_TAG releases/cpp/v${DEPENDENCY_VERSION}
     )

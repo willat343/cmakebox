@@ -1,18 +1,18 @@
 # Import Ceres as:
 #   import_Ceres(
 #        VERSION <STRING:version>
-#        [USE_FIND_PACKAGE]
+#        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
+#
+# Default METHOD is FETCH_GIT.
 #
 # Link to Ceres::ceres target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> Ceres::ceres)
 function(import_Ceres)
-    set(OPTIONS
-        USE_FIND_PACKAGE
-    )
+    set(OPTIONS)
     set(SINGLE_VALUE_ARGS
         VERSION
-        Eigen3_DIR
+        METHOD
     )
     set(MULTI_VALUE_ARGS)
     cmake_parse_arguments(
@@ -23,21 +23,22 @@ function(import_Ceres)
         ${ARGN}
     )
 
-    set(OUTPUT_OPTIONS)
-    foreach(OPTION ${OPTIONS})
-        if (DEPENDENCY_${OPTION})
-            list(APPEND OUTPUT_OPTIONS ${OPTION})
-        endif()
-    endforeach()
+    if (NOT DEPENDENCY_METHOD)
+        set(DEPENDENCY_METHOD "FETCH_GIT")
+    endif()
+
+    if (NOT DEPENDENCY_USE_FIND_PACKAGE AND DEPENDENCY_VERSION VERSION_LESS "2.2.0")
+        message(FATAL_ERROR "Must add USE_FIND_PACKAGE for VERSION < 2.2.0 because Ceres does not support FetchContent "
+            "correctly prior to this version.")
+    endif()
 
     import_dependency(
         Ceres
         TARGET Ceres::ceres
-        VERSION ${DEPENDENCY_VERSION}
-        USE_FIND_PACKAGE_REQUIRED_VERSION "2.2.0"
+        METHOD ${DEPENDENCY_METHOD}
+        FIND_PACKAGE_VERSION ${DEPENDENCY_VERSION}
         GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
         GIT_TAG ${DEPENDENCY_VERSION}
-        ${OUTPUT_OPTIONS}
         DISABLE_CACHE_VARIABLES BUILD_BENCHMARKS BUILD_TESTING BUILD_EXAMPLES PROVIDE_UNINSTALL_TARGET
         ENABLE_CACHE_VARIABLES EXPORT_BUILD_DIR
     )

@@ -1,17 +1,18 @@
 # Import nlohmann_json as:
 #   import_nlohmann_json(
 #        VERSION <STRING:version>
-#        [USE_FIND_PACKAGE]
+#        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
+#
+# Default METHOD is FETCH_GIT.
 #
 # Link to nlohmann_json::nlohmann_json target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> nlohmann_json::nlohmann_json)
 function(import_nlohmann_json)
-    set(OPTIONS
-        USE_FIND_PACKAGE
-    )
+    set(OPTIONS)
     set(SINGLE_VALUE_ARGS
         VERSION
+        METHOD
     )
     set(MULTI_VALUE_ARGS)
     cmake_parse_arguments(
@@ -22,21 +23,22 @@ function(import_nlohmann_json)
         ${ARGN}
     )
 
-    set(OUTPUT_OPTIONS)
-    foreach(OPTION ${OPTIONS})
-        if (DEPENDENCY_${OPTION})
-            list(APPEND OUTPUT_OPTIONS ${OPTION})
-        endif()
-    endforeach()
+    if (NOT DEPENDENCY_METHOD)
+        set(DEPENDENCY_METHOD "FETCH_GIT")
+    endif()
+
+    if (NOT DEPENDENCY_USE_FIND_PACKAGE AND DEPENDENCY_VERSION VERSION_LESS "3.8.0")
+        message(FATAL_ERROR "Must add USE_FIND_PACKAGE for VERSION < 3.8.0 because nlohmann_json does not support "
+            "FetchContent correctly prior to this version.")
+    endif()
 
     import_dependency(
         nlohmann_json
         TARGET nlohmann_json::nlohmann_json
-        VERSION ${DEPENDENCY_VERSION}
-        USE_FIND_PACKAGE_REQUIRED_VERSION "3.8.0"
+        METHOD ${DEPENDENCY_METHOD}
+        FIND_PACKAGE_VERSION ${DEPENDENCY_VERSION}
         GIT_REPOSITORY https://github.com/nlohmann/json.git
         GIT_TAG v${DEPENDENCY_VERSION}
-        ${OUTPUT_OPTIONS}
         DISABLE_CACHE_VARIABLES JSON_BuildTests BUILD_TESTING
     )
 endfunction()
