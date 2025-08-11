@@ -9,6 +9,9 @@
 #
 # Swap from shared library to static library with USE_SHARED_LIBRARY option.
 #
+# If installing/exporting, then ${foxglove_REAL_TARGET} must be included in the install targets, for example:
+#   `install(TARGET ... ${foxglove_REAL_TARGET} EXPORT ...)`
+#
 # Link to foxglove target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> foxglove::foxglove)
 function(import_foxglove)
@@ -71,12 +74,12 @@ function(import_foxglove)
     endif()
 
     if (NOT TARGET foxglove::foxglove)  
-        set(foxglove_TARGET foxglove_cpp_static)
+        set(foxglove_REAL_TARGET foxglove_cpp_static CACHE STRING "foxglove real target for install/export" FORCE)
         if (DEPENDENCY_USE_SHARED_LIBRARY)
-            set(foxglove_TARGET foxglove_cpp_shared)
+            set(foxglove_REAL_TARGET foxglove_cpp_shared CACHE STRING "foxglove real target for install/export" FORCE)
         endif()
         if (DEPENDENCY_METHOD STREQUAL "FETCH_GIT")
-            add_library(foxglove::foxglove ALIAS ${foxglove_TARGET})
+            add_library(foxglove::foxglove ALIAS ${foxglove_REAL_TARGET})
         elseif (DEPENDENCY_METHOD STREQUAL "FETCH_URL")
             set(foxglove_LIBRARY_TYPE STATIC)
             if (DEPENDENCY_USE_SHARED_LIBRARY)
@@ -86,25 +89,34 @@ function(import_foxglove)
             if (DEPENDENCY_USE_SHARED_LIBRARY)
                 set(foxglove_LIBRARY_FILE libfoxglove.so)
             endif()
+            include(GNUInstallDirs)
             file(GLOB foxglove_SRC_FILES CONFIGURE_DEPENDS
                 "${foxglove_SOURCE_DIR}/src/*.cpp"
                 "${foxglove_SOURCE_DIR}/src/server/*.cpp"
             )
-            add_library(${foxglove_TARGET} ${foxglove_LIBRARY_TYPE}
+            add_library(${foxglove_REAL_TARGET} ${foxglove_LIBRARY_TYPE}
                 ${foxglove_SRC_FILES}
             )
-            add_library(foxglove::foxglove ALIAS ${foxglove_TARGET})
-            target_include_directories(${foxglove_TARGET} PUBLIC
-                "${foxglove_SOURCE_DIR}/include"
+            add_library(foxglove::foxglove ALIAS ${foxglove_REAL_TARGET})
+            target_include_directories(${foxglove_REAL_TARGET} PUBLIC
+                $<BUILD_INTERFACE:${foxglove_SOURCE_DIR}/include>
+                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
             )
-            set_target_properties(${foxglove_TARGET} PROPERTIES
+            set_target_properties(${foxglove_REAL_TARGET} PROPERTIES
                 CXX_STANDARD 17
                 CXX_STANDARD_REQUIRED ON
             )
-            target_link_libraries(${foxglove_TARGET} PRIVATE
+            target_link_libraries(${foxglove_REAL_TARGET} PRIVATE
                 "${foxglove_SOURCE_DIR}/lib/${foxglove_LIBRARY_FILE}"
                 dl
                 pthread
+            )
+            install(
+                DIRECTORY include/foxglove
+                DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+                FILES_MATCHING
+                    PATTERN "*.hpp"
+                    PATTERN "*.h"
             )
         endif()
     endif()
