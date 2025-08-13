@@ -40,7 +40,6 @@ function(import_manif)
         FIND_PACKAGE_VERSION ${DEPENDENCY_VERSION}
         GIT_REPOSITORY https://github.com/willat343/manif.git
         GIT_TAG temp/fix/pedantic_warnings
-        ${OUTPUT_OPTIONS}
         DISABLE_CACHE_VARIABLES BUILD_TESTING BUILD_EXAMPLES
     )
 endfunction()
