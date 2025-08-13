@@ -6,6 +6,8 @@
 #        [IMPORT_ZSTD]
 #   )
 #
+# Tested VERSIONs: 2.0.2
+#
 # Default METHOD is FETCH_GIT.
 #
 # Link to mcap target with:

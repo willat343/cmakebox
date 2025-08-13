@@ -4,6 +4,8 @@
 #        [METHOD <STRING:FETCH_GIT>]
 #   )
 #
+# Tested VERSIONs: 1.5.7
+#
 # Default METHOD is FETCH_GIT.
 #
 # Link to zstd::libzstd target with:

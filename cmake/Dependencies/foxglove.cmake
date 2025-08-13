@@ -5,7 +5,9 @@
 #        [USE_SHARED_LIBRARY]
 #   )
 #
-# Default METHOD is URL.
+# Tested VERSIONs: 0.10.1
+#
+# Default METHOD is FETCH_URL.
 #
 # Swap from shared library to static library with USE_SHARED_LIBRARY option.
 #

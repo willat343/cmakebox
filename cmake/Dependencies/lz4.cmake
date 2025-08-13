@@ -4,6 +4,8 @@
 #        [METHOD <STRING:FETCH_GIT>]
 #   )
 #
+# Tested VERSIONs: 1.10.0
+#
 # Default METHOD is FETCH_GIT.
 #
 # Link to LZ4::lz4 target with:

@@ -4,7 +4,9 @@
 #        [METHOD <STRING:FETCH_GIT>]
 #   )
 #
-# Default METHOD is GIT.
+# Tested VERSIONs: 0.0.6
+#
+# Default METHOD is FETCH_GIT.
 #
 # Link to MANIF::manif target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> MANIF::manif)

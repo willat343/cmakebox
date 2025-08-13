@@ -4,6 +4,8 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
+# Tested VERSIONs: 2.2.0
+#
 # Default METHOD is FETCH_GIT.
 #
 # Link to Ceres::ceres target with:

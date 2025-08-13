@@ -4,6 +4,8 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
+# Tested VERSIONs: 3.4.0
+#
 # Default METHOD is FETCH_GIT.
 #
 # Link to Eigen3::Eigen target with:

@@ -4,6 +4,8 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
+# Tested VERSIONs: 3.8.0
+#
 # Default METHOD is FETCH_GIT.
 #
 # Link to nlohmann_json::nlohmann_json target with:

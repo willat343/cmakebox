@@ -4,6 +4,8 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
+# Tested VERSIONs: 2.3.0
+#
 # Default METHOD is FETCH_GIT.
 #
 # If this is called before or without import_nlohmann_json(...), then nlohmann_json 3.8.0 will be fetched. If

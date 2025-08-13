@@ -4,7 +4,9 @@
 #        [METHOD <STRING:FETCH_GIT>]
 #   )
 #
-# Default METHOD is GIT.
+# Tested VERSIONs: 3.7.0
+#
+# Default METHOD is FETCH_GIT.
 #
 # Link to pinocchio::pinocchio target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> pinocchio::pinocchio)

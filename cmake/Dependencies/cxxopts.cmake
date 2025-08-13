@@ -4,7 +4,9 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
-# Default METHOD is GIT.
+# Tested VERSIONs: 3.3.1
+#
+# Default METHOD is FETCH_GIT.
 #
 # Link to cxxopts::cxxopts target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> cxxopts::cxxopts)
