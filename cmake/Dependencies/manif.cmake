@@ -38,7 +38,6 @@ function(import_manif)
         TARGET MANIF::manif
         METHOD ${DEPENDENCY_METHOD}
         FIND_PACKAGE_VERSION ${DEPENDENCY_VERSION}
-        USE_FIND_PACKAGE_REQUIRED_VERSION "0.0.6"
         GIT_REPOSITORY https://github.com/willat343/manif.git
         GIT_TAG temp/fix/pedantic_warnings
         ${OUTPUT_OPTIONS}
