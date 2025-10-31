@@ -14,6 +14,15 @@
 #        [DISABLE_CACHE_VARS <VAR1> [<VAR2> ...]]
 #        [ENABLE_CACHE_VARS <VAR1> [<VAR2> ...]]
 #   )
+#
+# The dependency can then usually be linked with:
+#   target_link_libraries(<downstream_target> <INTERFACE|PUBLIC|PRIVATE> <target>)
+#
+# Additionally the following variables are set:
+#   ${DEPENDENCY}_FOUND         | YES if dependency was found
+#   ${DEPENDENCY}_DIR           | Location of dependency with CMake config file
+#   ${DEPENDENCY}_BINARY_DIR    | Location of dependency's binary directory
+#   ${DEPENDENCY}_SOURCE_DIR    | Location of dependency's source directory
 function(import_dependency DEPENDENCY)
     # Parse Inputs
     set(OPTIONS)
@@ -134,9 +143,13 @@ function(import_dependency DEPENDENCY)
                     "resposible for downloading code to a specified FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE}.")
             endif()
             FetchContent_MakeAvailable(${DEPENDENCY})
+            message(STATUS "Fetched ${DEPENDENCY} to ${${DEPENDENCY_LOWERCASE}_SOURCE_DIR}.")
             set(${DEPENDENCY}_FOUND "YES" CACHE STRING "${DEPENDENCY} was imported" FORCE)
             set(${DEPENDENCY}_DIR ${${DEPENDENCY}_BINARY_DIR} CACHE STRING "${DEPENDENCY} directory" FORCE)
-            message(STATUS "Fetched ${DEPENDENCY} to ${${DEPENDENCY_LOWERCASE}_SOURCE_DIR}.")
+            set(${DEPENDENCY}_BINARY_DIR ${${DEPENDENCY_LOWERCASE}_BINARY_DIR} CACHE STRING
+                "${DEPENDENCY} binary directory" FORCE)
+            set(${DEPENDENCY}_SOURCE_DIR ${${DEPENDENCY_LOWERCASE}_SOURCE_DIR} CACHE STRING
+                "${DEPENDENCY} source directory" FORCE)
             if (DEPENDENCY_DISABLE_CACHE_VARIABLES)
                 restore_cache_variables(${DEPENDENCY_DISABLE_CACHE_VARIABLES})
             endif()
@@ -152,6 +165,7 @@ endfunction()
 include(Dependencies/Ceres)
 include(Dependencies/cxxopts)
 include(Dependencies/Eigen3)
+include(Dependencies/foxglove_schemas)
 include(Dependencies/foxglove)
 include(Dependencies/httplib)
 include(Dependencies/lz4)

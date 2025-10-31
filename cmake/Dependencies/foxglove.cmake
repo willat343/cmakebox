@@ -1,4 +1,4 @@
-# Import foxglove as:
+# Import foxglove-sdk's c++ API as:
 #   import_foxglove(
 #        VERSION <STRING:version>
 #        [METHOD <STRING:FETCH_GIT|FETCH_URL>]
