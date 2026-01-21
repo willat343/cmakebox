@@ -34,6 +34,7 @@ function(import_Ceres)
             "correctly prior to this version.")
     endif()
 
+    # USE_CUDA has been disabled due to this bug in Ceres: https://github.com/ceres-solver/ceres-solver/issues/1188
     import_dependency(
         Ceres
         TARGET Ceres::ceres
@@ -41,7 +42,7 @@ function(import_Ceres)
         FIND_PACKAGE_VERSION ${DEPENDENCY_VERSION}
         GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
         GIT_TAG ${DEPENDENCY_VERSION}
-        DISABLE_CACHE_VARIABLES BUILD_BENCHMARKS BUILD_DOCUMENTATION BUILD_EXAMPLES BUILD_TESTING PROVIDE_UNINSTALL_TARGET
+        DISABLE_CACHE_VARIABLES BUILD_BENCHMARKS BUILD_DOCUMENTATION BUILD_EXAMPLES BUILD_TESTING PROVIDE_UNINSTALL_TARGET USE_CUDA
         ENABLE_CACHE_VARIABLES EXPORT_BUILD_DIR
     )
 endfunction()
