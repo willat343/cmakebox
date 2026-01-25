@@ -164,6 +164,7 @@ endfunction()
 
 include(Dependencies/Ceres)
 include(Dependencies/cxxopts)
+include(Dependencies/doxygen)
 include(Dependencies/Eigen3)
 include(Dependencies/foxglove_schemas)
 include(Dependencies/foxglove)
