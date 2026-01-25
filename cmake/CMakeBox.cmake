@@ -21,15 +21,17 @@ endfunction()
 
 # Create CMAKE_BUILD_TYPE option with default value and supported options
 function(setup_build_type)
-    if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build Type")
-        message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}")
-    endif()
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
-    set(RELEASE_BUILD_TYPES Release RelWithDebInfo MinSizeRel)
-    if (NOT CMAKE_BUILD_TYPE IN_LIST RELEASE_BUILD_TYPES)
-        message(AUTHOR_WARNING "Non-Release build type ${CMAKE_BUILD_TYPE} is recommended only for debugging. "
-                "Prefer one of ${RELEASE_BUILD_TYPES}.")
+    if (NOT CMAKE_CONFIGURATION_TYPES)
+        if (NOT CMAKE_BUILD_TYPE)
+            set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build Type" FORCE)
+            message(STATUS "Build type set to ${CMAKE_BUILD_TYPE}")
+        endif()
+        set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
+        set(RELEASE_BUILD_TYPES Release RelWithDebInfo MinSizeRel)
+        if (NOT CMAKE_BUILD_TYPE IN_LIST RELEASE_BUILD_TYPES)
+            message(AUTHOR_WARNING "Non-Release build type ${CMAKE_BUILD_TYPE} is recommended only for debugging. "
+                    "Prefer one of ${RELEASE_BUILD_TYPES}.")
+        endif()
     endif()
 endfunction()
 
