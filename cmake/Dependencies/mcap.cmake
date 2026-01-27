@@ -12,6 +12,15 @@
 #
 # Link to mcap target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> mcap::mcap)
+#
+# Then in exactly one translational unit file (a cpp file) the user should add:
+# ```
+# #define MCAP_IMPLEMENTATION
+# #include <mcap/mcap.hpp>
+# ```
+# This is because the authors of mcap intend for the user to compile mcap into their project, and this must be done in
+# exactly one cpp file in order to not violate the one-definition rule. This macro cannot be included as a compile
+# definition for the mcap target or else this violation can occur.
 function(import_mcap)
     set(OPTIONS
         IMPORT_LZ4
@@ -47,7 +56,7 @@ function(import_mcap)
     endif()
 
     set(MCAP_LINK_LIBRARIES)
-    set(MCAP_COMPILE_DEFINITIONS MCAP_IMPLEMENTATION)
+    set(MCAP_COMPILE_DEFINITIONS)
     if (TARGET LZ4::lz4)
         list(APPEND MCAP_LINK_LIBRARIES LZ4::lz4)
     else()
