@@ -53,7 +53,7 @@ function(create_uninstall_target)
     if (PROJECT_IS_TOP_LEVEL)
         if (NOT TARGET uninstall)
             configure_file(
-                "${CMAKE_CURRENT_LIST_DIR}/cmake_uninstall.cmake.in"
+                "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/cmake_uninstall.cmake.in"
                 "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
                 @ONLY
             )
