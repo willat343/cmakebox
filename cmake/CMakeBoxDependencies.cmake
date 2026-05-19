@@ -162,6 +162,7 @@ function(import_dependency DEPENDENCY)
     endif()
 endfunction()
 
+include(Dependencies/Boost)
 include(Dependencies/Ceres)
 include(Dependencies/cxxopts)
 include(Dependencies/doxygen)
