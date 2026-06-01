@@ -162,6 +162,49 @@ function(import_dependency DEPENDENCY)
     endif()
 endfunction()
 
+# Use to declare a minimum and maximum version of a dependency.
+#
+# If ${DEPENDENCY}_VERSION is not defined, a default ${DEPENDENCY}_VERSION is set as a cache variable.
+#
+# Typically used just before `import_dependency(<DEPENDENCY> VERSION ${<DEPENDENCY>_VERSION})`, and has the useful
+# effect of communicating a desired dependency version to other packages which also use this function.
+function(dependency_version DEPENDENCY)
+    # Parse Inputs
+    set(OPTIONS)
+    set(SINGLE_VALUE_ARGS
+        MINIMUM_VERSION
+        MAXIMUM_VERSION
+    )
+    set(MULTI_VALUE_ARGS)
+    cmake_parse_arguments(
+        DEPENDENCY
+        "${OPTIONS}"
+        "${SINGLE_VALUE_ARGS}"
+        "${MULTI_VALUE_ARGS}"
+        ${ARGN}
+    )
+
+    if (NOT DEFINED ${DEPENDENCY}_VERSION)
+        if (DEPENDENCY_MAXIMUM_VERSION)
+            set(${DEPENDENCY}_VERSION
+                "${DEPENDENCY_MAXIMUM_VERSION}" CACHE STRING "Version of ${DEPENDENCY} to import.")
+        elseif (DEPENDENCY_MINIMUM_VERSION)
+            set(${DEPENDENCY}_VERSION
+                "${DEPENDENCY_MINIMUM_VERSION}" CACHE STRING "Version of ${DEPENDENCY} to import.")
+        else()
+            message(FATAL_ERROR "Failed to set ${DEPENDENCY} version as no minimum (or maximum) version was provided.")
+        endif()
+    endif()
+    if (DEPENDENCY_MINIMUM_VERSION AND ${DEPENDENCY}_VERSION VERSION_LESS DEPENDENCY_MINIMUM_VERSION)
+        message(FATAL_ERROR
+                "${DEPENDENCY} version ${${DEPENDENCY}_VERSION} less than minimum ${DEPENDENCY_MINIMUM_VERSION}.")
+    endif()
+    if (DEPENDENCY_MAXIMUM_VERSION AND ${DEPENDENCY}_VERSION VERSION_GREATER DEPENDENCY_MAXIMUM_VERSION)
+        message(FATAL_ERROR
+                "${DEPENDENCY} version ${${DEPENDENCY}_VERSION} greater than maximum ${DEPENDENCY_MAXIMUM_VERSION}.")
+    endif()
+endfunction()
+
 include(Dependencies/Boost)
 include(Dependencies/Ceres)
 include(Dependencies/cxxopts)
