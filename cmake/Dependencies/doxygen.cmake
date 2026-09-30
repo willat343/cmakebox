@@ -8,6 +8,9 @@
 #
 # Default METHOD is FETCH_GIT.
 #
+# When fetching, building doxygen from source requires bison, flex and python3 to be installed on the system (e.g.
+# `sudo apt install bison flex python3`).
+#
 # This creates a target doxygen, which should be made a dependency of the documentation target with:
 #   add_dependencies(<documentation_target> doxygen)
 function(import_doxygen)
@@ -27,6 +30,15 @@ function(import_doxygen)
 
     if (NOT DEPENDENCY_METHOD)
         set(DEPENDENCY_METHOD "FETCH_GIT")
+    endif()
+
+    if (NOT DEPENDENCY_METHOD STREQUAL "FIND_PACKAGE")
+        find_system_dependencies(MISSING PROGRAMS bison flex python3)
+        if (MISSING)
+            string(REPLACE ";" " " MISSING "${MISSING}")
+            message(FATAL_ERROR "Building doxygen from source requires missing system dependencies: ${MISSING} "
+                "(install with `sudo apt install ${MISSING}`).")
+        endif()
     endif()
 
     string(REPLACE "." ";" DEPENDENCY_VERSION_LIST "${DEPENDENCY_VERSION}")

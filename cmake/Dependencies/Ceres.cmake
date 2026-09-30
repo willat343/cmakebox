@@ -8,6 +8,8 @@
 #
 # Default METHOD is FETCH_GIT.
 #
+# When fetching, MINIGLOG is enabled for Ceres if Google Log (glog) cannot be found.
+#
 # Link to Ceres::ceres target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> Ceres::ceres)
 function(import_Ceres)
@@ -34,6 +36,16 @@ function(import_Ceres)
             "correctly prior to this version.")
     endif()
 
+    # Ceres requires glog when built from source, unless its minimal glog substitute (MINIGLOG) is enabled.
+    set(ENABLE_MINIGLOG)
+    if (NOT DEPENDENCY_METHOD STREQUAL "FIND_PACKAGE" AND NOT MINIGLOG)
+        find_system_dependencies(MISSING LIBRARIES glog HEADERS glog/logging.h)
+        if (MISSING)
+            message(STATUS "Google Log (glog) not found. Enabling MINIGLOG for Ceres.")
+            set(ENABLE_MINIGLOG MINIGLOG)
+        endif()
+    endif()
+
     # USE_CUDA has been disabled due to this bug in Ceres: https://github.com/ceres-solver/ceres-solver/issues/1188
     import_dependency(
         Ceres
@@ -43,6 +55,6 @@ function(import_Ceres)
         GIT_REPOSITORY https://github.com/ceres-solver/ceres-solver.git
         GIT_TAG ${DEPENDENCY_VERSION}
         DISABLE_CACHE_VARIABLES BUILD_BENCHMARKS BUILD_DOCUMENTATION BUILD_EXAMPLES BUILD_TESTING PROVIDE_UNINSTALL_TARGET USE_CUDA
-        ENABLE_CACHE_VARIABLES EXPORT_BUILD_DIR
+        ENABLE_CACHE_VARIABLES EXPORT_BUILD_DIR ${ENABLE_MINIGLOG}
     )
 endfunction()
