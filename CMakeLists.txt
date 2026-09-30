@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 project(cmakebox
-    VERSION 0.0.14
+    VERSION 0.0.15
     DESCRIPTION "CMakebox Package"
 )
