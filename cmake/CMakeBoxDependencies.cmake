@@ -205,6 +205,51 @@ function(dependency_version DEPENDENCY)
     endif()
 endfunction()
 
+# Find system dependencies (e.g. those required to build a fetched dependency from source) as:
+#   find_system_dependencies(
+#        <MISSING_VAR>
+#        [PROGRAMS <program1> [<program2> ...]]
+#        [LIBRARIES <library1> [<library2> ...]]
+#        [HEADERS <header1> [<header2> ...]]
+#   )
+#
+# <MISSING_VAR> is set to the list of programs, libraries and headers that were not found (empty if all were found).
+function(find_system_dependencies MISSING_VAR)
+    set(OPTIONS)
+    set(SINGLE_VALUE_ARGS)
+    set(MULTI_VALUE_ARGS
+        PROGRAMS
+        LIBRARIES
+        HEADERS
+    )
+    cmake_parse_arguments(
+        SYSTEM_DEPENDENCY
+        "${OPTIONS}"
+        "${SINGLE_VALUE_ARGS}"
+        "${MULTI_VALUE_ARGS}"
+        ${ARGN}
+    )
+
+    set(MISSING)
+    foreach(TYPE IN LISTS MULTI_VALUE_ARGS)
+        foreach(NAME IN LISTS SYSTEM_DEPENDENCY_${TYPE})
+            string(MAKE_C_IDENTIFIER "CMAKEBOX_${TYPE}_${NAME}" RESULT)
+            if (TYPE STREQUAL "PROGRAMS")
+                find_program(${RESULT} ${NAME})
+            elseif (TYPE STREQUAL "LIBRARIES")
+                find_library(${RESULT} ${NAME})
+            else()
+                find_path(${RESULT} ${NAME})
+            endif()
+            mark_as_advanced(${RESULT})
+            if (NOT ${RESULT})
+                list(APPEND MISSING ${NAME})
+            endif()
+        endforeach()
+    endforeach()
+    set(${MISSING_VAR} ${MISSING} PARENT_SCOPE)
+endfunction()
+
 include(Dependencies/Boost)
 include(Dependencies/Ceres)
 include(Dependencies/cxxopts)
