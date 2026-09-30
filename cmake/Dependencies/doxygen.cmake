@@ -36,8 +36,8 @@ function(import_doxygen)
         find_system_dependencies(MISSING PROGRAMS bison flex python3)
         if (MISSING)
             string(REPLACE ";" " " MISSING "${MISSING}")
-            message(FATAL_ERROR "Building doxygen from source requires missing system dependencies: ${MISSING} "
-                "(install with `sudo apt install ${MISSING}`).")
+            message(FATAL_ERROR "Building doxygen from source requires missing system dependencies "
+                "(${MISSING}), which can be installed with:\n  sudo apt install ${MISSING}")
         endif()
     endif()
 

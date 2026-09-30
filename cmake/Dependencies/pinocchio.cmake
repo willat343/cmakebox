@@ -8,6 +8,9 @@
 #
 # Default METHOD is FETCH_GIT.
 #
+# When fetching with URDF support (BUILD_WITH_URDF_SUPPORT, default ON), building pinocchio from source requires urdfdom
+# and urdfdom_headers to be installed on the system (e.g. `sudo apt install liburdfdom-dev`).
+#
 # Link to pinocchio::pinocchio target with:
 #   target_link_libraries(<target> <INTERFACE|PUBLIC|PRIVATE> pinocchio::pinocchio)
 function(import_pinocchio)
@@ -27,6 +30,17 @@ function(import_pinocchio)
 
     if (NOT DEPENDENCY_METHOD)
         set(DEPENDENCY_METHOD "FETCH_GIT")
+    endif()
+
+    # Pinocchio's URDF support (BUILD_WITH_URDF_SUPPORT, default ON) requires urdfdom and urdfdom_headers.
+    if (NOT DEPENDENCY_METHOD STREQUAL "FIND_PACKAGE" AND
+            (NOT DEFINED BUILD_WITH_URDF_SUPPORT OR BUILD_WITH_URDF_SUPPORT))
+        find_system_dependencies(MISSING LIBRARIES urdfdom_model HEADERS urdf_model/model.h)
+        if (MISSING)
+            string(REPLACE ";" " " MISSING "${MISSING}")
+            message(FATAL_ERROR "Building pinocchio from source with URDF support requires missing system "
+                "dependencies (${MISSING}), which can be installed with:\n  sudo apt install liburdfdom-dev")
+        endif()
     endif()
 
     import_dependency(
