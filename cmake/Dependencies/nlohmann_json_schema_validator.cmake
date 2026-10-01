@@ -4,6 +4,9 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency() (including to import_nlohmann_json() if requested). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 2.3.0
 #
 # Default METHOD is FETCH_GIT.
@@ -41,6 +44,7 @@ function(import_nlohmann_json_schema_validator)
         import_nlohmann_json(
             VERSION "3.8.0"
             METHOD ${DEPENDENCY_METHOD}
+            ${DEPENDENCY_UNPARSED_ARGUMENTS}
         )
     endif()
 
@@ -54,5 +58,6 @@ function(import_nlohmann_json_schema_validator)
         GIT_REPOSITORY https://github.com/pboettch/json-schema-validator.git
         GIT_TAG ${DEPENDENCY_VERSION}
         ENABLE_CACHE_VARIABLES JSON_VALIDATOR_INSTALL JSON_VALIDATOR_SHARED_LIBS nlohmann_json_schema_validator_SHARED_LIBS
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
 endfunction()

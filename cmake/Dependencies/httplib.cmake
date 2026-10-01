@@ -4,6 +4,9 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency(). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 0.25.0
 #
 # Default METHOD is FETCH_GIT.
@@ -37,5 +40,6 @@ function(import_httplib)
         GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
         GIT_TAG v${DEPENDENCY_VERSION}
         DISABLE_CACHE_VARIABLES HTTPLIB_USE_NON_BLOCKING_GETADDRINFO
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
 endfunction()

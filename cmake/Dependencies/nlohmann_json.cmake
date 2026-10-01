@@ -4,6 +4,9 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency(). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 3.8.0
 #
 # Default METHOD is FETCH_GIT.
@@ -42,5 +45,6 @@ function(import_nlohmann_json)
         GIT_REPOSITORY https://github.com/nlohmann/json.git
         GIT_TAG v${DEPENDENCY_VERSION}
         DISABLE_CACHE_VARIABLES JSON_BuildTests BUILD_TESTING
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
 endfunction()

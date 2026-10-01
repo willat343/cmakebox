@@ -4,6 +4,9 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency(). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 3.3.1
 #
 # Default METHOD is FETCH_GIT.
@@ -53,6 +56,7 @@ function(import_doxygen)
         FIND_PACKAGE_VERSION ${DEPENDENCY_VERSION}
         GIT_REPOSITORY https://github.com/doxygen/doxygen.git
         GIT_TAG Release_${DEPENDENCY_VERSION_MAJOR}_${DEPENDENCY_VERSION_MINOR}_${DEPENDENCY_VERSION_PATCH}
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
 
     set(DOXYGEN_EXECUTABLE $<TARGET_FILE:doxygen> PARENT_SCOPE)

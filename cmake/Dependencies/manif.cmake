@@ -4,6 +4,9 @@
 #        [METHOD <STRING:FETCH_GIT>]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency(). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 0.0.6
 #
 # Default METHOD is FETCH_GIT.
@@ -43,5 +46,6 @@ function(import_manif)
         GIT_REPOSITORY https://github.com/willat343/manif.git
         GIT_TAG temp/fix/pedantic_warnings
         DISABLE_CACHE_VARIABLES BUILD_TESTING BUILD_EXAMPLES
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
 endfunction()

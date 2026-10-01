@@ -6,6 +6,10 @@
 #        [IMPORT_ZSTD]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency() (including to import_lz4() and import_zstd() if requested). See CMakeBoxDependencies.cmake for
+# details.
+#
 # Tested VERSIONs: 2.0.2
 #
 # Default METHOD is FETCH_GIT.
@@ -42,12 +46,14 @@ function(import_mcap)
     if (DEPENDENCY_IMPORT_LZ4)
         import_lz4(
             VERSION 1.10.0
+            ${DEPENDENCY_UNPARSED_ARGUMENTS}
         )
     endif()
 
     if (DEPENDENCY_IMPORT_ZSTD)
         import_zstd(
             VERSION 1.5.7
+            ${DEPENDENCY_UNPARSED_ARGUMENTS}
         )
     endif()
 
@@ -75,6 +81,7 @@ function(import_mcap)
         FIND_PACKAGE_VERSION ${DEPENDENCY_VERSION}
         GIT_REPOSITORY https://github.com/foxglove/mcap.git
         GIT_TAG releases/cpp/v${DEPENDENCY_VERSION}
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
     FetchContent_GetProperties(mcap_cpp SOURCE_DIR mcap_cpp_SOURCE_DIR)
 

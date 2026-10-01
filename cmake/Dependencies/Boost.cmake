@@ -5,6 +5,9 @@
 #        [BOOST_REQUIRED_LIBRARIES <VAR1> [<VAR2> ...]]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency(). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 1.90.0
 #
 # Default METHOD is FETCH_URL. FETCH_GIT is not recommended due to how huge boost is.
@@ -94,5 +97,6 @@ function(import_Boost)
         URL_HASH ${URL_HASH}
         ENABLE_CACHE_VARIABLES BOOST_ENABLE_CMAKE
         DISABLE_CACHE_VARIABLES BUILD_TESTING BUILD_EXAMPLES
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
 endfunction()

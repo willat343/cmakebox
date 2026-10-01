@@ -4,6 +4,9 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency(). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 2.2.0
 #
 # Default METHOD is FETCH_GIT.
@@ -56,5 +59,6 @@ function(import_Ceres)
         GIT_TAG ${DEPENDENCY_VERSION}
         DISABLE_CACHE_VARIABLES BUILD_BENCHMARKS BUILD_DOCUMENTATION BUILD_EXAMPLES BUILD_TESTING PROVIDE_UNINSTALL_TARGET USE_CUDA
         ENABLE_CACHE_VARIABLES EXPORT_BUILD_DIR ${ENABLE_MINIGLOG}
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
 endfunction()

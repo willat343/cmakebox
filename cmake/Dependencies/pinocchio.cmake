@@ -4,6 +4,9 @@
 #        [METHOD <STRING:FETCH_GIT>]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency(). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 3.7.0
 #
 # Default METHOD is FETCH_GIT.
@@ -62,5 +65,6 @@ function(import_pinocchio)
         GIT_REPOSITORY https://github.com/stack-of-tasks/pinocchio.git
         GIT_TAG v${DEPENDENCY_VERSION}
         DISABLE_CACHE_VARIABLES BUILD_TESTING BUILD_EXAMPLES BUILD_PYTHON_INTERFACE
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
 endfunction()

@@ -13,7 +13,16 @@
 #        [URL_HASH <STRING:hash_algorithm=hash>]
 #        [DISABLE_CACHE_VARS <VAR1> [<VAR2> ...]]
 #        [ENABLE_CACHE_VARS <VAR1> [<VAR2> ...]]
+#        [COMPILE_FLAGS <FLAG1> [<FLAG2> ...]]
+#        [LINK_FLAGS <FLAG1> [<FLAG2> ...]]
 #   )
+#
+# COMPILE_FLAGS are appended to CMAKE_C_FLAGS and CMAKE_CXX_FLAGS, and LINK_FLAGS are appended to
+# CMAKE_EXE_LINKER_FLAGS, CMAKE_SHARED_LINKER_FLAGS and CMAKE_MODULE_LINKER_FLAGS, while the dependency is built
+# (FETCH_GIT and FETCH_URL methods only). The changes are limited to the scope of this call, so the dependency inherits
+# them but the calling project does not. They are not applied to dependencies found with FIND_PACKAGE because those are
+# already built. This is useful when code in a dependency must be built consistently with the calling project (e.g.
+# sanitizer flags).
 #
 # The dependency can then usually be linked with:
 #   target_link_libraries(<downstream_target> <INTERFACE|PUBLIC|PRIVATE> <target>)
@@ -39,6 +48,8 @@ function(import_dependency DEPENDENCY)
     set(MULTI_VALUE_ARGS
         DISABLE_CACHE_VARIABLES
         ENABLE_CACHE_VARIABLES
+        COMPILE_FLAGS
+        LINK_FLAGS
     )
     cmake_parse_arguments(
         DEPENDENCY
@@ -141,6 +152,17 @@ function(import_dependency DEPENDENCY)
                     "FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE} was specified as "
                     "${FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE}} but no directory was found. The user is "
                     "resposible for downloading code to a specified FETCHCONTENT_SOURCE_DIR_${DEPENDENCY_UPPERCASE}.")
+            endif()
+            if (DEPENDENCY_COMPILE_FLAGS)
+                list(JOIN DEPENDENCY_COMPILE_FLAGS " " DEPENDENCY_COMPILE_FLAGS_STRING)
+                string(APPEND CMAKE_C_FLAGS " ${DEPENDENCY_COMPILE_FLAGS_STRING}")
+                string(APPEND CMAKE_CXX_FLAGS " ${DEPENDENCY_COMPILE_FLAGS_STRING}")
+            endif()
+            if (DEPENDENCY_LINK_FLAGS)
+                list(JOIN DEPENDENCY_LINK_FLAGS " " DEPENDENCY_LINK_FLAGS_STRING)
+                string(APPEND CMAKE_EXE_LINKER_FLAGS " ${DEPENDENCY_LINK_FLAGS_STRING}")
+                string(APPEND CMAKE_SHARED_LINKER_FLAGS " ${DEPENDENCY_LINK_FLAGS_STRING}")
+                string(APPEND CMAKE_MODULE_LINKER_FLAGS " ${DEPENDENCY_LINK_FLAGS_STRING}")
             endif()
             FetchContent_MakeAvailable(${DEPENDENCY})
             message(STATUS "Fetched ${DEPENDENCY} to ${${DEPENDENCY_LOWERCASE}_SOURCE_DIR}.")

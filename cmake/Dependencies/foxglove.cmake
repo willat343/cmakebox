@@ -5,6 +5,9 @@
 #        [USE_SHARED_LIBRARY]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency(). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 0.10.1
 #
 # Default METHOD is FETCH_URL.
@@ -70,6 +73,7 @@ function(import_foxglove)
         SOURCE_SUBDIR cpp
         URL https://github.com/foxglove/foxglove-sdk/releases/download/sdk/v${DEPENDENCY_VERSION}/foxglove-v${DEPENDENCY_VERSION}-cpp-x86_64-unknown-linux-gnu.zip
         URL_HASH ${URL_HASH}
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
     if (NOT foxglove_SOURCE_DIR)
         FetchContent_GetProperties(foxglove SOURCE_DIR foxglove_SOURCE_DIR)

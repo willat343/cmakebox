@@ -4,6 +4,9 @@
 #        [METHOD <STRING:FIND_PACKAGE|FETCH_GIT>]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency(). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 3.4.0
 #
 # Default METHOD is FETCH_GIT.
@@ -49,5 +52,6 @@ function(import_Eigen3)
         GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
         GIT_TAG ${DEPENDENCY_VERSION}
         DISABLE_CACHE_VARIABLES BUILD_TESTING BUILD_EXAMPLES
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
 endfunction()

@@ -4,6 +4,9 @@
 #        [METHOD <STRING:FETCH_GIT>]
 #   )
 #
+# Any additional arguments not listed above (e.g. COMPILE_FLAGS and LINK_FLAGS) are forwarded to
+# import_dependency(). See CMakeBoxDependencies.cmake for details.
+#
 # Tested VERSIONs: 1.10.0
 #
 # Default METHOD is FETCH_GIT.
@@ -37,6 +40,7 @@ function(import_lz4)
         GIT_REPOSITORY https://github.com/lz4/lz4.git
         GIT_TAG v${DEPENDENCY_VERSION}
         SOURCE_SUBDIR build/cmake
+        ${DEPENDENCY_UNPARSED_ARGUMENTS}
     )
 
     # TODO: use install/export insights from https://apache.googlesource.com/nifi-minifi-cpp/+/HEAD/cmake/LZ4.cmake
